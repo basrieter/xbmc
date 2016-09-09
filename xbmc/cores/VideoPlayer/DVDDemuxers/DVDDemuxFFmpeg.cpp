@@ -660,8 +660,11 @@ AVDictionary *CDVDDemuxFFmpeg::GetFFMpegOptionsFromInput()
       }
       else if (name == "cookie")
       {
-        av_dict_set(&options, "cookies", value.c_str(), 0);
-        CLog::Log(LOGDEBUG, "CDVDDemuxFFmpeg::GetFFMpegOptionsFromInput() adding ffmpeg option 'cookies: %s'", value.c_str());
+        std::string cookieValue = value;
+        StringUtils::TrimRight(cookieValue, ";");
+        cookieValue += "; Domain=." + url.GetHostName() + "; Path=/;";
+        av_dict_set(&options, "cookies", cookieValue.c_str(), 0);
+        CLog::Log(LOGDEBUG, "CDVDDemuxFFmpeg::GetFFMpegOptionsFromInput() adding ffmpeg option 'cookies: %s'", cookieValue.c_str());
         hasCookies = true;
       }
       // other standard headers (see https://en.wikipedia.org/wiki/List_of_HTTP_header_fields) are appended as actual headers
